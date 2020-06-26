@@ -1,0 +1,11 @@
+app:
+  stomp:
+    url: ws://localhost:54702
+    host: 127.0.0.1
+    port: 54702
+    username: admin
+    password: admin
+
+logging:
+  level:
+    root: INFO
