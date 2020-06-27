@@ -27,8 +27,16 @@ public class AtmsController {
 
     private final AtmMapper mapper;
 
-    @GetMapping("/{deviceId}")
-    public AtmDto atm(@Valid @PathVariable Long deviceId) {
+    @GetMapping("/{inDeviceId}")
+    public AtmDto atm(@Valid @PathVariable String inDeviceId) {
+        Long deviceId;
+        try {
+            deviceId = Long.valueOf(inDeviceId);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("atm not found");
+        }
+
+
         var atmsData = alfaBankClient.getAtms();
         for (var atm : atmsData.getData().getAtms()) {
             if (null != atm.getDeviceId() && atm.getDeviceId().equals(deviceId)) {

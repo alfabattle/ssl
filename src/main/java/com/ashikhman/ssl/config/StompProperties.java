@@ -23,19 +23,6 @@ public class StompProperties {
     private String url;
 
     /**
-     * Websocket host (e.g. 127.0.0.1).
-     */
-    @NotBlank
-    private String host;
-
-    /**
-     * Websocket port.
-     */
-    @NotNull
-    @Positive
-    private Integer port;
-
-    /**
      * Connection username.
      */
     private String username;

@@ -3,6 +3,10 @@ app:
     url: ${WS_URL:}
     username: ${WS_USERNAME:}
     password: ${WS_PASSWORD:}
+  alfa-bank:
+    private-key-file: ${ALFA_BANK_PRIVATE_KEY_FILE:}
+    cert-file: ${ALFA_BANK_CERT_FILE:}
+    trust-file: ${ALFA_BANK_TRUST_FILE:}
 
 server:
   port: ${SERVER_PORT:}

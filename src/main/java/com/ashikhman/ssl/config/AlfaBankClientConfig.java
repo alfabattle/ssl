@@ -6,13 +6,12 @@ import io.netty.handler.ssl.SslContextBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-import java.io.IOException;
+import java.io.File;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,11 +21,13 @@ public class AlfaBankClientConfig {
 
     private final ObjectMapper objectMapper;
 
+    private final AlfaBankProperties properties;
+
     @Bean
-    public AlfaBankClient alfaBankClient() throws IOException {
-        var privateKeyFile = new ClassPathResource("apidevelopers.pem").getFile();
-        var certFile = new ClassPathResource("apidevelopers.cer").getFile();
-        var trustFile = new ClassPathResource("apiws.alfabank.ru.crt").getFile();
+    public AlfaBankClient alfaBankClient() {
+        var privateKeyFile = new File(properties.getPrivateKeyFile());
+        var certFile = new File(properties.getCertFile());
+        var trustFile = new File(properties.getTrustFile());
         var sslContext = SslContextBuilder
                 .forClient()
                 .keyManager(certFile, privateKeyFile, null)
