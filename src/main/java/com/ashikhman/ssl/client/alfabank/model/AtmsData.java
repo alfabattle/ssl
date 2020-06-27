@@ -8,4 +8,6 @@ import java.util.List;
 @Data
 public class AtmsData {
     private List<Atm> atms;
+
+    private String bankLicense;
 }

@@ -10,3 +10,8 @@ server:
 logging:
   level:
     root: INFO
+
+spring:
+  jackson:
+    serialization:
+      indent_output: true
