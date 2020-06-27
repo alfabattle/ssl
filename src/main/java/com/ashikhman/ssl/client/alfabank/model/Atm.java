@@ -34,4 +34,8 @@ public class Atm {
     private TimeAccess timeAccess;
 
     private Long timeShift;
+
+    public boolean hasPayments() {
+        return null != availablePaymentSystems && availablePaymentSystems.size() > 0;
+    }
 }
