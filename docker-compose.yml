@@ -4,11 +4,11 @@ volumes:
   postgres: ~
 
 services:
-  activemq:
-    image: rmohr/activemq
-    ports:
-      - "${ACTIVEMQ_UI_PORT}:8161"
-      - "${ACTIVEMQ_WS_PORT}:61614"
+#  activemq:
+#    image: rmohr/activemq
+#    ports:
+#      - "${ACTIVEMQ_UI_PORT}:8161"
+#      - "${ACTIVEMQ_WS_PORT}:61614"
 
   alfa-battle-task1-websocket:
     image: arpmipg/alfa-battle:task1-websocket

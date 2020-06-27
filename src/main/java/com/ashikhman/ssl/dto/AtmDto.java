@@ -15,5 +15,5 @@ public class AtmDto {
 
     private String location;
 
-    private Boolean payments;
+    private boolean payments = false;
 }

@@ -35,7 +35,19 @@ public class Atm {
 
     private Long timeShift;
 
+    public int getPaymentsCount() {
+        if (null == availablePaymentSystems) {
+            return 0;
+        }
+
+        return availablePaymentSystems.size();
+    }
+
     public boolean hasPayments() {
-        return null != availablePaymentSystems && availablePaymentSystems.size() > 0;
+        if (null == services) {
+            return false;
+        }
+
+        return "Y".equalsIgnoreCase(services.getPayments());
     }
 }
