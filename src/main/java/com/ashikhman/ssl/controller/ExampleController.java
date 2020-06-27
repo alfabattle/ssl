@@ -1,9 +1,10 @@
 package com.ashikhman.ssl.controller;
 
+import com.ashikhman.ssl.client.alfabank.AlfaBankClient;
+import com.ashikhman.ssl.client.alfabank.model.Atms;
 import com.ashikhman.ssl.model.TopicItem;
 import com.ashikhman.ssl.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.integration.stomp.outbound.StompMessageHandler;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,16 +18,24 @@ public class ExampleController {
 
     private final PollableChannel channel;
 
-    @GetMapping("/test")
-    public String test() throws InterruptedException {
+    private final AlfaBankClient alfaBankClient;
 
-        return itemService.get().getName();
+    @GetMapping("/atms")
+    public Atms atms() {
+        return alfaBankClient.getAtms();
     }
 
     @GetMapping("/aga")
     public String aga() {
         return channel.receive().getPayload().toString();
     }
+
+    @GetMapping("/test")
+    public String test() throws InterruptedException {
+
+        return itemService.get().getName();
+    }
+
 
     @GetMapping("/publish")
     public void publish() {

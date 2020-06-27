@@ -34,17 +34,6 @@ public class StompConfig {
     private final StompProperties properties;
 
     @Bean
-    public ReactorNettyTcpStompClient stompClient() {
-        ReactorNettyTcpStompClient stompClient = new ReactorNettyTcpStompClient(properties.getHost(), properties.getPort());
-        stompClient.setMessageConverter(new PassThruMessageConverter());
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.afterPropertiesSet();
-        stompClient.setTaskScheduler(taskScheduler);
-
-        return stompClient;
-    }
-
-    @Bean
     public StompSessionManager stompSessionManager(WebSocketStompClient client) {
         StompHeaders headers = new StompHeaders();
         if (!StringUtils.isEmpty(properties.getUsername())) {
@@ -60,11 +49,6 @@ public class StompConfig {
         return manager;
     }
 
-    /**
-     * Creates STOMP client bean.
-     *
-     * @return the client
-     */
     @Bean
     public WebSocketStompClient webSocketStompClient() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();

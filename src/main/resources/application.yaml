@@ -1,10 +1,11 @@
 app:
   stomp:
-    url: ws://localhost:54702
-    host: 127.0.0.1
-    port: 54702
-    username: admin
-    password: admin
+    url: ${WS_URL:}
+    username: ${WS_USERNAME:}
+    password: ${WS_PASSWORD:}
+
+server:
+  port: ${SERVER_PORT:}
 
 logging:
   level:
