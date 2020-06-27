@@ -5,6 +5,8 @@ import com.ashikhman.ssl.config.StompProperties;
 import com.ashikhman.ssl.dto.DeviceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.lang.Nullable;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
@@ -15,6 +17,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -26,7 +29,7 @@ public class MessageProducer {
     private final WebSocketStompClient stompClient;
     private final StompProperties properties;
     private StompSession session;
-    private ConcurrentHashMap<Long, Long> devices = new ConcurrentHashMap<>();
+    private static HashMap<Long, Long> devices = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -45,7 +48,8 @@ public class MessageProducer {
 
                 log.error("Connected to the broker");
 
-                session.subscribe("/topic/aflik", new StompSessionHandlerAdapter() {
+
+                session.subscribe("/topic/alfik", new StompSessionHandlerAdapter() {
                     @Override
                     public void handleFrame(StompHeaders headers, Object payload) {
                         var device = (DeviceDto) payload;
@@ -60,29 +64,63 @@ public class MessageProducer {
                     @Override
                     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
                         log.error("Subscribed");
-
-                        client.getAtms().getData().getAtms().forEach(atm -> {
-                            send("/", new DeviceDto().setDeviceId(atm.getDeviceId()));
-                        });
                     }
 
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
                         return DeviceDto.class;
                     }
+
+                    /**
+                     * This implementation is empty.
+                     */
+                    @Override
+                    public void handleException(StompSession session, @Nullable StompCommand command,
+                                                StompHeaders headers, byte[] payload, Throwable exception) {
+
+                        log.error("OLOLO");
+                    }
+
+                    /**
+                     * This implementation is empty.
+                     */
+                    @Override
+                    public void handleTransportError(StompSession session, Throwable exception) {
+                        log.error("OLOLO");
+                    }
                 });
 
+                client.getAtms().getData().getAtms().forEach(atm -> {
+                    send("/", new DeviceDto().setDeviceId(atm.getDeviceId()));
+                });
+            }
 
+            /**
+             * This implementation is empty.
+             */
+            @Override
+            public void handleException(StompSession session, @Nullable StompCommand command,
+                                        StompHeaders headers, byte[] payload, Throwable exception) {
+
+                log.error("OLOLO");
+            }
+
+            /**
+             * This implementation is empty.
+             */
+            @Override
+            public void handleTransportError(StompSession session, Throwable exception) {
+                log.error("OLOLO");
             }
         });
     }
 
     synchronized public void send(String destination, Object payload) {
-
+        //log.error("Sending {}", payload);
         session.send(destination, payload);
     }
 
     public long getAflik(long deviceId) {
-        return devices.get(deviceId);
+        return devices.containsKey(deviceId) ? devices.get(deviceId) : 0;
     }
 }

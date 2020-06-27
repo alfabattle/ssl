@@ -3,7 +3,6 @@ package com.ashikhman.ssl.controller;
 import com.ashikhman.ssl.client.alfabank.AlfaBankClient;
 import com.ashikhman.ssl.client.alfabank.model.Atm;
 import com.ashikhman.ssl.dto.AtmDto;
-import com.ashikhman.ssl.dto.DeviceDto;
 import com.ashikhman.ssl.dto.ErrorDto;
 import com.ashikhman.ssl.mapper.AtmMapper;
 import com.ashikhman.ssl.service.MessageProducer;
@@ -110,8 +109,18 @@ public class AtmsController {
     @GetMapping("/nearest-with-alfik")
     public List<AtmDto> nearest(@Valid @RequestParam String latitude,
                                 @Valid @RequestParam String longitude,
-                                @Valid @RequestParam long alfik) {
+                                @Valid @RequestParam String alfik) {
 
+        Double latitudeDouble;
+        Double longitudeDouble;
+        Long alfikLong;
+        try {
+            latitudeDouble = Double.valueOf(latitude);
+            longitudeDouble = Double.valueOf(longitude);
+            alfikLong = Long.valueOf(alfik);
+        } catch (NumberFormatException e) {
+            return new ArrayList<>();
+        }
 
         var list = new ArrayList<Pair<Double, Atm>>(2048);
 
@@ -128,8 +137,8 @@ public class AtmsController {
             var distance = distance(
                     Double.valueOf(coordinates.getLatitude()),
                     Double.valueOf(coordinates.getLongitude()),
-                    Double.valueOf(latitude),
-                    Double.valueOf(longitude)
+                    latitudeDouble,
+                    longitudeDouble
             );
 
 //            producer.send("/", new DeviceDto().setDeviceId(atm.getDeviceId()));
@@ -148,29 +157,21 @@ public class AtmsController {
             return 0;
         });
 
-        int limit = 465465464;
-        int i = 0;
         var resultList = new ArrayList<AtmDto>(128);
         for (var pair : list) {
             var distance = pair.getValue0();
             var atm = pair.getValue1();
 
-            //producer.send("/", new DeviceDto().setDeviceId(atm.getDeviceId()));
-
-            //var device = (DeviceDto) Objects.requireNonNull(stompInputChannel.receive()).getPayload();
-//            var device = new DeviceDto().setAlfik(100000);
-
             var deviceAflik = producer.getAflik(atm.getDeviceId());
 
-            if (alfik >= deviceAflik) {
-                alfik -= deviceAflik;
+            if (deviceAflik >= alfikLong) {
+                alfikLong -= deviceAflik;
                 resultList.add(mapper.atmToDto(atm));
             }
 
-            if (i >= limit) {
+            if (alfikLong <= 0) {
                 break;
             }
-            ++i;
         }
 
         return resultList;
@@ -194,32 +195,4 @@ public class AtmsController {
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
-
-
-//
-//    @GetMapping("/raw")
-//    public List<Atm> raw() {
-//        return alfaBankClient.getAtms().getData().getAtms().stream().filter(atm -> {
-//
-//            return atm.getCoordinates() != null;
-//
-//        }).collect(Collectors.toList());
-//    }
-//
-//    @GetMapping("/aga")
-//    public String aga() {
-//        return channel.receive().getPayload().toString();
-//    }
-//
-//    @GetMapping("/test")
-//    public String test() throws InterruptedException {
-//
-//        return itemService.get().getName();
-//    }
-//
-//
-//    @GetMapping("/publish")
-//    public void publish() {
-//        channel.send(new GenericMessage<>(new TopicItem().setName("BLAAA")));
-//    }
 }
